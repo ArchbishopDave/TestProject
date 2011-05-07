@@ -16,12 +16,18 @@ namespace TestGame.BattleClasses
         private Color alpha { get; set; }
         private float turnSpeed { get; set; }
 
+        protected int x_dim { get; set; }
+        protected int y_dim { get; set; }
+
         public Unit(float x, float y)
         {
             x_pos = x;
             y_pos = y;
 
             turnSpeed = (float) Math.PI/2;
+
+            x_dim = 40;
+            y_dim = 40;
         }
 
         public Unit(float x, float y, float face)
@@ -59,8 +65,7 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb)
         {
-            sb.Draw(texture, new Rectangle((int)x_pos, (int)y_pos,20,20), null, alpha, facing, 
-                new Vector2(x_pos,y_pos), SpriteEffects.None, 0f);
+            sb.Draw(texture, new Vector2(x_pos, y_pos), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
         }
     }
 }

@@ -28,10 +28,5 @@ namespace TestGame
                 u.DRAW(sb);
             }
         }
-
-        public void BADMETHOD_TURNTEST(bool direction, float percentSecond)
-        {
-            unitList[0].turnDirection(direction, percentSecond);
-        }
     }
 }

@@ -22,6 +22,8 @@ namespace TestGame
         BattleBase bb;
         Texture2D p_icon;
 
+        UnitController tempController;
+
         public GameBase()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -54,13 +56,15 @@ namespace TestGame
             p_icon = Content.Load<Texture2D>("P_Icon");
             // TODO: use this.Content to load your game content here
 
-            Unit a = new Unit(10, 10, 0);
+            Unit a = new Unit(50, 80, 0);
             a.setTexture(p_icon, Color.Yellow);
-            Unit b = new Unit(50, 50, 2);
+            Unit b = new Unit(154, 154, 0);
             b.setTexture(p_icon, Color.Red);
 
             bb.addUnit(a);
             bb.addUnit(b);
+
+            tempController = new UnitController(a);
         }
 
         /// <summary>
@@ -83,13 +87,15 @@ namespace TestGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X >= 0.1)
-                bb.BADMETHOD_TURNTEST(false, getTimePercentage(gameTime));
+            List<String> temp = new List<String>();
+
+            //if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X >= 0.1)
+            temp.Add("UNIT-TURN-LEFT");
 
             if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X <= -0.1)
-                bb.BADMETHOD_TURNTEST(true, getTimePercentage(gameTime));
-            // TODO: Add your update logic here
 
+            // TODO: Add your update logic here
+            tempController.handleCommand(temp, getTimePercentage(gameTime));
             base.Update(gameTime);
         }
 
