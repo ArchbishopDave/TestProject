@@ -28,6 +28,16 @@ namespace TestGame.BattleClasses
                 {
                     unit.turnDirection(false, percentSecond);
                 }
+
+                if (command.Equals("UNIT-MOVE-FORWARD"))
+                {
+                    unit.moveDirection(true, percentSecond);
+                }
+
+                if (command.Equals("UNIT-MOVE-BACKWARD"))
+                {
+                    unit.moveDirection(false, percentSecond);
+                }
             }
         }
     }
