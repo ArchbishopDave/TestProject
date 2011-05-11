@@ -9,17 +9,21 @@ namespace TestGame.BattleClasses
 {
     class Unit
     {
-        private float x_pos { get; set; }
-        private float y_pos { get; set; }
-        private float facing { get; set; }
+        public float x_pos { get; set; }
+        public float y_pos { get; set; }
+        public float facing { get; set; }
         private Texture2D texture { get; set; }
         private Color alpha { get; set; }
 
         protected int x_dim { get; set; }
         protected int y_dim { get; set; }
 
-        Dictionary<String, int> stats;
+        Dictionary<String, int> m_stats;
         private float turnSpeed { get; set; }
+
+        private String m_name { get; set; }
+
+        public bool m_important { get; set; }
 
         public Unit(float x, float y)
         {
@@ -29,7 +33,8 @@ namespace TestGame.BattleClasses
             x_dim = 32;
             y_dim = 32;
 
-            stats = new Dictionary<String, int>();
+            m_stats = new Dictionary<String, int>();
+            m_important = false;
         }
 
         public Unit(float x, float y, float face)
@@ -38,23 +43,34 @@ namespace TestGame.BattleClasses
             facing = face;
         }
 
+        public Unit(float x, float y, float face, String name)
+            : this(x, y, face)
+        {
+            m_name = name;
+        }
+
         public void setStats(int hp, int fp, int pow, int ski, int fin, int blo, int end, int spe, int lvl, int exp, int turn)
         {
-            stats.Add("HP", hp);
-            stats.Add("MHP", hp);
-            stats.Add("FP", fp);
-            stats.Add("MFP",fp);
-            stats.Add("POWER",pow);
-            stats.Add("SKILL",ski);
-            stats.Add("FINESSE",fin);
-            stats.Add("BLOCK",blo);
-            stats.Add("ENDURE",end);
-            stats.Add("SPEED",spe);
-            stats.Add("LEVEL",lvl);
-            stats.Add("EXP",exp);
-            stats.Add("TURN",turn);
+            m_stats.Add("HP", hp);
+            m_stats.Add("MHP", hp);
+            m_stats.Add("FP", fp);
+            m_stats.Add("MFP",fp);
+            m_stats.Add("POWER",pow);
+            m_stats.Add("SKILL",ski);
+            m_stats.Add("FINESSE",fin);
+            m_stats.Add("BLOCK",blo);
+            m_stats.Add("ENDURE",end);
+            m_stats.Add("SPEED",spe);
+            m_stats.Add("LEVEL",lvl);
+            m_stats.Add("EXP",exp);
+            m_stats.Add("TURN",turn);
 
             turnSpeed = ((float) turn) / 1000.0f;
+        }
+
+        public void setImportance(bool imp)
+        {
+            m_important = imp;
         }
 
         public void setTexture(Texture2D tex, Color alph)
@@ -91,23 +107,28 @@ namespace TestGame.BattleClasses
                 BACKWARDS_MODIFIER = 1.0f;
 
             // Movement Calculation is Here, obviously will require tweaking
-            y_pos += ((float)Math.Sin((double)facing) * stats["SPEED"]) * percentSecond * BACKWARDS_MODIFIER;
-            x_pos += ((float)Math.Cos((double)facing) * stats["SPEED"]) * percentSecond * BACKWARDS_MODIFIER;
+            y_pos += ((float)Math.Sin((double)facing) * m_stats["SPEED"]) * percentSecond * BACKWARDS_MODIFIER;
+            x_pos += ((float)Math.Cos((double)facing) * m_stats["SPEED"]) * percentSecond * BACKWARDS_MODIFIER;
         }
 
-        public void DRAW(SpriteBatch sb)
+        public void DRAW(SpriteBatch sb, int x, int y)
         {
-            sb.Draw(texture, new Vector2(x_pos, y_pos), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+            sb.Draw(texture, new Vector2((int)x_pos-x, (int)y_pos-y), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
         }
 
         public int getHP()
         {
-            return stats["HP"];
+            return m_stats["HP"];
         }
 
         public int getFP()
         {
-            return stats["FP"];
+            return m_stats["FP"];
+        }
+
+        public String getName()
+        {
+            return m_name;
         }
 
         public void TESTCHANGER()
@@ -115,8 +136,8 @@ namespace TestGame.BattleClasses
             Random ran = new Random();
             if (2 > ran.Next(100))
             {
-                stats["HP"] = ran.Next(stats["MHP"]);
-                stats["FP"] = ran.Next(stats["MFP"]);
+                m_stats["HP"] = ran.Next(m_stats["MHP"]);
+                m_stats["FP"] = ran.Next(m_stats["MFP"]);
             }
 
         }

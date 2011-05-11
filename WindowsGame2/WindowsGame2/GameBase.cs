@@ -30,6 +30,9 @@ namespace TestGame
 
         UnitInputHandler m_inputHandler;
 
+        const int SCREEN_WIDTH  = 800;
+        const int SCREEN_HEIGHT = 800;
+
         public GameBase()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -48,7 +51,7 @@ namespace TestGame
             Window.Title = "Test Game";
             bb = new BattleBase();
 
-            InitGraphicsMode(800, 800, false);
+            InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             CommandTimer.formTemplates();
 
@@ -70,23 +73,27 @@ namespace TestGame
 
             // TODO: use this.Content to load your game content here
 
-            Unit a = new Unit(50, 80, 0);
+            Unit a = new Unit(50, 80, 0, "Player");
             a.setTexture(p_icon, Color.Yellow);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
+            a.setImportance(true);
             Unit b = new Unit(154, 154, 0);
             b.setTexture(p_icon, Color.Red);
 
             Random ran = new Random();
             for ( int i = 0; i < 400; i++ )
             {
-                Unit x = new Unit(ran.Next(800), ran.Next(800), ran.Next(3));
-                x.setTexture(p_icon, new Color(ran.Next(255), ran.Next(255), ran.Next(255)));
+                Unit x = new Unit(ran.Next(1200)-ran.Next(1200), ran.Next(1200)-ran.Next(1200), ran.Next(3));
+                x.setTexture(p_icon, new Color(ran.Next(2)*255, ran.Next(2)*255, ran.Next(2)*255));
                 bb.addUnit(x);
             }
             bb.addUnit(a);
             bb.addUnit(b);
 
             barDisplayUnit = a;
+
+            bb.m_camera.setScreenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+            bb.m_camera.setUnitFocus("Player");
 
             m_inputHandler = new UnitInputHandler(PlayerIndex.One, new UnitController(a));
 
@@ -150,6 +157,7 @@ namespace TestGame
             spriteBatch.Draw(bar_edge, new Vector2(FP + 16, Height+32), null, Color.LightGreen, 0.0f, new Vector2(0, 0), new Vector2(0.5f, 0.75f), SpriteEffects.None, 0.0f);
             spriteBatch.DrawString(bar_font, "" + FP, new Vector2(Start + 8, Height + 32), new Color(0, 55, 0));
         }
+
         private float getTimePercentage(GameTime gameTime)
         {
             return (float)gameTime.ElapsedGameTime.Milliseconds / 1000;
