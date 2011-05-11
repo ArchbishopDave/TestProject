@@ -28,7 +28,7 @@ namespace TestGame
 
         Unit barDisplayUnit;
 
-        UnitController tempController;
+        UnitInputHandler m_inputHandler;
 
         public GameBase()
         {
@@ -49,6 +49,9 @@ namespace TestGame
             bb = new BattleBase();
 
             InitGraphicsMode(800, 800, false);
+
+            CommandTimer.formTemplates();
+
             base.Initialize();
         }
 
@@ -69,16 +72,25 @@ namespace TestGame
 
             Unit a = new Unit(50, 80, 0);
             a.setTexture(p_icon, Color.Yellow);
-            a.setStats(250, 170, 100, 100, 100, 100, 100, 100, 1, 0, 4000);
+            a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             Unit b = new Unit(154, 154, 0);
             b.setTexture(p_icon, Color.Red);
 
+            Random ran = new Random();
+            for ( int i = 0; i < 400; i++ )
+            {
+                Unit x = new Unit(ran.Next(800), ran.Next(800), ran.Next(3));
+                x.setTexture(p_icon, new Color(ran.Next(255), ran.Next(255), ran.Next(255)));
+                bb.addUnit(x);
+            }
             bb.addUnit(a);
             bb.addUnit(b);
 
             barDisplayUnit = a;
 
-            tempController = new UnitController(a);
+            m_inputHandler = new UnitInputHandler(PlayerIndex.One, new UnitController(a));
+
+
         }
 
         /// <summary>
@@ -101,22 +113,7 @@ namespace TestGame
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            List<String> temp = new List<String>();
-
-            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X >= 0.2)
-                temp.Add("UNIT-TURN-LEFT");
-
-            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.X <= -0.2)
-                temp.Add("UNIT-TURN-RIGHT");
-
-            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y >= 0.2)
-                temp.Add("UNIT-MOVE-FORWARD");
-
-            if (GamePad.GetState(PlayerIndex.One).ThumbSticks.Left.Y <= -0.2)
-                temp.Add("UNIT-MOVE-BACKWARD");
-
-            // TODO: Add your update logic here
-            tempController.handleCommand(temp, getTimePercentage(gameTime));
+            m_inputHandler.handleInputs(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
             base.Update(gameTime);
@@ -145,13 +142,13 @@ namespace TestGame
             int Start = 32;
             int HP = barDisplayUnit.getHP();
             spriteBatch.Draw(bar_mid, new Vector2(Start,Height), null, Color.LightBlue, 0.0f, new Vector2(0, 0), new Vector2(((float)HP-16)/32.0f, 0.75f), SpriteEffects.None, 0.0f);
-            spriteBatch.DrawString(bar_font, "" + HP, new Vector2(Start + 8, Height), Color.DarkBlue);
             spriteBatch.Draw(bar_edge, new Vector2(HP+16, Height), null, Color.LightBlue, 0.0f, new Vector2(0, 0), new Vector2(0.5f, 0.75f), SpriteEffects.None, 0.0f);
+            spriteBatch.DrawString(bar_font, "" + HP, new Vector2(Start + 8, Height), Color.DarkBlue);
 
             int FP = barDisplayUnit.getFP();
             spriteBatch.Draw(bar_mid, new Vector2(Start, Height+32), null, Color.LightGreen, 0.0f, new Vector2(0, 0), new Vector2(((float)FP - 16) / 32.0f, 0.75f), SpriteEffects.None, 0.0f);
-            spriteBatch.DrawString(bar_font, "" + FP, new Vector2(Start + 8, Height+32), new Color(0,55,0));
             spriteBatch.Draw(bar_edge, new Vector2(FP + 16, Height+32), null, Color.LightGreen, 0.0f, new Vector2(0, 0), new Vector2(0.5f, 0.75f), SpriteEffects.None, 0.0f);
+            spriteBatch.DrawString(bar_font, "" + FP, new Vector2(Start + 8, Height + 32), new Color(0, 55, 0));
         }
         private float getTimePercentage(GameTime gameTime)
         {

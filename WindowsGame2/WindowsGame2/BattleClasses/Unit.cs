@@ -26,8 +26,8 @@ namespace TestGame.BattleClasses
             x_pos = x;
             y_pos = y;
 
-            x_dim = 40;
-            y_dim = 40;
+            x_dim = 32;
+            y_dim = 32;
 
             stats = new Dictionary<String, int>();
         }
