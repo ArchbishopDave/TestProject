@@ -8,7 +8,7 @@ namespace TestGame.BattleClasses
 {
     class UnitController : Controller
     {
-        private Unit unit { get; set; }
+        public Unit unit { get; set; }
         private CommandTimer action { get; set; }
 
         public UnitController(Unit u)

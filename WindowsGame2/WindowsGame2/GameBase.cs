@@ -77,25 +77,27 @@ namespace TestGame
             a.setTexture(p_icon, Color.Yellow);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.setImportance(true);
-            Unit b = new Unit(154, 154, 0);
-            b.setTexture(p_icon, Color.Red);
 
             Random ran = new Random();
-            for ( int i = 0; i < 400; i++ )
+            for ( int i = 0; i < 200; i++ )
             {
-                Unit x = new Unit(ran.Next(1200)-ran.Next(1200), ran.Next(1200)-ran.Next(1200), ran.Next(3));
-                x.setTexture(p_icon, new Color(ran.Next(2)*255, ran.Next(2)*255, ran.Next(2)*255));
+                Unit x = new Unit(ran.Next(400)+400, ran.Next(400)+400, 3.99f+((float)ran.Next(50))/100.0f);
+                x.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                x.setTexture(p_icon, Color.Cyan);
                 bb.addUnit(x);
+                Unit y = new Unit(ran.Next(400) - 400, ran.Next(400) - 400, 0.6f + ((float)ran.Next(50)) / 100.0f);
+                y.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                y.setTexture(p_icon, Color.DarkMagenta);
+                bb.addUnit(y);
             }
             bb.addUnit(a);
-            bb.addUnit(b);
 
             barDisplayUnit = a;
 
             bb.m_camera.setScreenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
             bb.m_camera.setUnitFocus("Player");
 
-            m_inputHandler = new UnitInputHandler(PlayerIndex.One, new UnitController(a));
+            m_inputHandler = new UnitInputHandler(PlayerIndex.One, bb.getUnitController(a));
 
 
         }
@@ -121,6 +123,7 @@ namespace TestGame
                 this.Exit();
 
             m_inputHandler.handleInputs(getTimePercentage(gameTime));
+            bb.TESTMETHODCHARGE(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
             base.Update(gameTime);
