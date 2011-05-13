@@ -12,6 +12,7 @@ namespace TestGame.BattleClasses
         public float x_pos { get; set; }
         public float y_pos { get; set; }
         public float facing { get; set; }
+
         private Texture2D texture { get; set; }
         private Color alpha { get; set; }
 
@@ -68,11 +69,6 @@ namespace TestGame.BattleClasses
             turnSpeed = ((float) turn) / 1000.0f;
         }
 
-        public void setImportance(bool imp)
-        {
-            m_important = imp;
-        }
-
         public void setTexture(Texture2D tex, Color alph)
         {
             texture = tex;
@@ -113,7 +109,8 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb, int x, int y)
         {
-            sb.Draw(texture, new Vector2((int)x_pos-x, (int)y_pos-y), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+            if ( Math.Abs(x_pos-x) <= 1200 && Math.Abs(y_pos-y) <= 1200) 
+                sb.Draw(texture, new Vector2((int)x_pos-x, (int)y_pos-y), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
         }
 
         public int getHP()

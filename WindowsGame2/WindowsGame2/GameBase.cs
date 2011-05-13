@@ -76,23 +76,41 @@ namespace TestGame
             Unit a = new Unit(50, 80, 0, "Player");
             a.setTexture(p_icon, Color.Yellow);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
-            a.setImportance(true);
+            a.m_important = true;
+            BattleGroup bgA = new BattleGroup(a);
 
             Random ran = new Random();
-            for ( int i = 0; i < 200; i++ )
+            for (int i = 0; i < 20; i++)
             {
-                Unit x = new Unit(ran.Next(400)+400, ran.Next(400)+400, 3.99f+((float)ran.Next(50))/100.0f);
+                Unit l = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
+                l.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                l.setTexture(p_icon, new Color(255, 255, 255));
+                BattleGroup BGX = new BattleGroup(l);
+                for (int j = 0; j < 100; j++)
+                {
+                    Unit f = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
+                    f.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                    f.setTexture(p_icon, new Color(i * 10, i * 10, i * 10));
+                    BGX.addUnit(f);
+                }
+                bb.addUnitGroup("Fodder:"+i,BGX);
+            }
+
+            /*for ( int i = 0; i < 15000; i++ )
+            {
+                Unit x = new Unit(ran.Next(2000)+600, ran.Next(2000)+600, 3.99f+((float)ran.Next(50))/100.0f);
                 x.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                 x.setTexture(p_icon, Color.Cyan);
                 bb.addUnit(x);
-                Unit y = new Unit(ran.Next(400) - 400, ran.Next(400) - 400, 0.6f + ((float)ran.Next(50)) / 100.0f);
+                Unit y = new Unit(ran.Next(2000) - 2000, ran.Next(2000) - 2000, 0.6f + ((float)ran.Next(50)) / 100.0f);
                 y.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                 y.setTexture(p_icon, Color.DarkMagenta);
                 bb.addUnit(y);
-            }
+            }*/
             bb.addUnit(a);
 
             barDisplayUnit = a;
+            bb.addUnitGroup("Player",bgA);
 
             bb.m_camera.setScreenSize(SCREEN_WIDTH, SCREEN_HEIGHT);
             bb.m_camera.setUnitFocus("Player");
@@ -123,9 +141,10 @@ namespace TestGame
                 this.Exit();
 
             m_inputHandler.handleInputs(getTimePercentage(gameTime));
-            bb.TESTMETHODCHARGE(getTimePercentage(gameTime));
+            //bb.TESTMETHODCHARGE(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
+            bb.setVisible();
             base.Update(gameTime);
             
         }
