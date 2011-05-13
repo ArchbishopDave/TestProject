@@ -109,7 +109,6 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb, int x, int y)
         {
-            if ( Math.Abs(x_pos-x) <= 1200 && Math.Abs(y_pos-y) <= 1200) 
                 sb.Draw(texture, new Vector2((int)x_pos-x, (int)y_pos-y), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
         }
 

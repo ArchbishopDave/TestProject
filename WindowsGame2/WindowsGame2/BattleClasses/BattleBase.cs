@@ -19,12 +19,12 @@ namespace TestGame.BattleClasses
             m_camera = new BattleCamera(this);
         }
 
-        public void addUnit(Unit u)
+        public void addUnit(UnitController u)
         {
-            unitList.Add(new UnitController(u));
-            if (u.m_important)
+            unitList.Add(u);
+            if (u.unit.m_important)
             {
-                m_camera.addPossibleFocus(u);
+                m_camera.addPossibleFocus(u.unit);
             }
         }
 
@@ -67,10 +67,19 @@ namespace TestGame.BattleClasses
 
         public void setVisible()
         {
-            List<int> modifier = m_camera.getViewModifier();
+            List<int> modifier = m_camera.getViewPosition();
             foreach (KeyValuePair<String, BattleGroup> bg in m_unitGroups)
             {
                 bg.Value.checkDisplayAdd(modifier[0], modifier[1]);
+            }
+        }
+
+        public void checkVisible(float percentSecond)
+        {
+            List<int> modifier = m_camera.getViewPosition();
+            foreach (KeyValuePair<String, BattleGroup> bg in m_unitGroups)
+            {
+                bg.Value.checkDisplayRemove(modifier[0], modifier[1], percentSecond);
             }
         }
     }

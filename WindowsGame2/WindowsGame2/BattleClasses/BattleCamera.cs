@@ -65,5 +65,21 @@ namespace TestGame.BattleClasses
             }
             return returnValue;
         }
+
+        public List<int> getViewPosition()
+        {
+            List<int> returnValue = new List<int>();
+            if (m_unitFocus)
+            {
+                returnValue.Add((int)m_possibleUnitFocuses[m_currentFocus].x_pos);
+                returnValue.Add((int)m_possibleUnitFocuses[m_currentFocus].y_pos);
+            }
+            else
+            {
+                returnValue.Add(m_xFocus);
+                returnValue.Add(m_yFocus);
+            }
+            return returnValue;
+        }
     }
 }

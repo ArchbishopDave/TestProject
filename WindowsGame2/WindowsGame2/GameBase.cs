@@ -30,7 +30,7 @@ namespace TestGame
 
         UnitInputHandler m_inputHandler;
 
-        const int SCREEN_WIDTH  = 800;
+        const int SCREEN_WIDTH  = 1400;
         const int SCREEN_HEIGHT = 800;
 
         public GameBase()
@@ -54,6 +54,7 @@ namespace TestGame
             InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             CommandTimer.formTemplates();
+            BattleGroup.setConstants(1200, 800, 10);
 
             base.Initialize();
         }
@@ -77,7 +78,8 @@ namespace TestGame
             a.setTexture(p_icon, Color.Yellow);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.m_important = true;
-            BattleGroup bgA = new BattleGroup(a);
+            UnitController PLAYERCONTROLLER = new UnitController(a);
+            BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER);
 
             Random ran = new Random();
             for (int i = 0; i < 20; i++)
@@ -85,13 +87,15 @@ namespace TestGame
                 Unit l = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
                 l.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                 l.setTexture(p_icon, new Color(255, 255, 255));
-                BattleGroup BGX = new BattleGroup(l);
+                UnitController UCL = new UnitController(l);
+                BattleGroup BGX = new BattleGroup(UCL);
                 for (int j = 0; j < 100; j++)
                 {
                     Unit f = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
                     f.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                     f.setTexture(p_icon, new Color(i * 10, i * 10, i * 10));
-                    BGX.addUnit(f);
+                    UnitController UCF = new UnitController(f);
+                    BGX.addUnit(UCF);
                 }
                 bb.addUnitGroup("Fodder:"+i,BGX);
             }
@@ -107,7 +111,7 @@ namespace TestGame
                 y.setTexture(p_icon, Color.DarkMagenta);
                 bb.addUnit(y);
             }*/
-            bb.addUnit(a);
+            bb.addUnit(PLAYERCONTROLLER);
 
             barDisplayUnit = a;
             bb.addUnitGroup("Player",bgA);
@@ -141,6 +145,8 @@ namespace TestGame
                 this.Exit();
 
             m_inputHandler.handleInputs(getTimePercentage(gameTime));
+
+            bb.checkVisible(getTimePercentage(gameTime));
             //bb.TESTMETHODCHARGE(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
