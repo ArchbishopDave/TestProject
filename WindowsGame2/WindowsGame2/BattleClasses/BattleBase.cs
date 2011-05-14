@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework;
+using System.Diagnostics;
 
 namespace TestGame.BattleClasses
 {
@@ -33,6 +35,10 @@ namespace TestGame.BattleClasses
 
         public void addUnitGroup(String name, BattleGroup bg)
         {
+            foreach (UnitController uc in bg.m_units)
+            {
+                unitList.Add(uc);
+            }
             m_unitGroups.Add(name, bg);
         }
 
@@ -65,11 +71,26 @@ namespace TestGame.BattleClasses
         public void TESTMETHODATTACK(float percentSecond)
         {
             List<String> commands = new List<string>();
+            Random ran = new Random();
             commands.Add("UNIT-COMMAND-START-ATTACK");
-            foreach (UnitController u in unitList)
+            foreach (KeyValuePair<String,BattleGroup> bg in m_unitGroups)
             {
-                if (u.unit.m_important == true)
-                    u.handleCommand(commands, percentSecond);
+                if (bg.Value.m_display)
+                {
+                    foreach (UnitController u in bg.Value.m_units)
+                    {
+                        if (u.unit.m_important != true)
+                        {
+                            if (ran.Next(100) == 50)
+                            {
+                                u.handleCommand(commands, percentSecond);
+                                u.unit.alpha = Color.Yellow;
+                            }
+                            else
+                                u.unit.alpha = Color.Green;
+                        }
+                    }
+                }
             }
         }
 
@@ -120,5 +141,17 @@ namespace TestGame.BattleClasses
             }
         }
 
+        public void checkDiagnostics()
+        {
+            Debug.WriteLine("Unit Count: " + unitList.Count);
+            int DISPTOTAL = 0;
+            foreach (KeyValuePair<String, BattleGroup> bg in m_unitGroups)
+            {
+                if (bg.Value.m_display)
+                    DISPTOTAL += bg.Value.m_units.Count;
+            }
+            Debug.WriteLine("Displayed Units: " + DISPTOTAL);
+            Debug.WriteLine("Damage Arc Count: " + m_damageArcs.Count);
+        }
     }
 }

@@ -87,7 +87,7 @@ namespace TestGame.BattleClasses
 
         public void swing()
         {
-            m_battleBase.addDamageArc(new DamageArc(this, 16.0f, 0f, 0.3f, 1.0f));
+            m_battleBase.addDamageArc(new DamageArc(this, 16.0f, 0.5f, -0.5f, 1.0f));
         }
     }
 }

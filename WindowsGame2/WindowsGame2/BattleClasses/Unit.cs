@@ -14,7 +14,7 @@ namespace TestGame.BattleClasses
         public float facing { get; set; }
 
         private List<Texture2D> m_textures { get; set; }
-        private Color alpha { get; set; }
+        public Color alpha { get; set; }
 
         protected int x_dim { get; set; }
         protected int y_dim { get; set; }
@@ -25,6 +25,8 @@ namespace TestGame.BattleClasses
         private String m_name { get; set; }
 
         public bool m_important { get; set; }
+
+        public Weapon m_weapon { get; set; }
 
         public Unit(float x, float y)
         {
@@ -83,6 +85,11 @@ namespace TestGame.BattleClasses
             m_textures.Add(tex);
         }
 
+        public void setWeapon(Weapon w)
+        {
+            m_weapon = w;
+        }
+
         public void turnDirection(bool right, float percentSecond)
         {
             float turn = turnSpeed * percentSecond;
@@ -121,6 +128,8 @@ namespace TestGame.BattleClasses
             {
                 sb.Draw(tex, new Vector2((int)x_pos - x, (int)y_pos - y), null, alpha, facing, new Vector2(tex.Width / 2, tex.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
             }
+            if ( m_weapon != null )
+                m_weapon.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing);
         }
 
         public int getHP()

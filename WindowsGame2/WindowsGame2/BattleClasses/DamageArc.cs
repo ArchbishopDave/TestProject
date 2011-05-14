@@ -11,7 +11,7 @@ namespace TestGame.BattleClasses
         private UnitController m_sourceUnit;
         private List<UnitController> m_hitUnits;
 
-        private static int m_arcCount = 7;
+        private static int m_arcCount = 4;
 
         private float m_arcLength { get; set; }
         private float m_arcStart { get; set; }
@@ -63,12 +63,19 @@ namespace TestGame.BattleClasses
            // Debug.WriteLine((x * x) + (y * y) + " " + rad);
             if ((x * x) + (y * y) < (rad*rad))
             {
-                Debug.WriteLine("Possible Intersection?");
                 float nx = m_sourceUnit.unit.x_pos + (float)Math.Cos(m_arcTurn * m_count + m_arcStart) * (m_arcLength+32);
                 float ny = m_sourceUnit.unit.y_pos + (float)Math.Sin(m_arcTurn * m_count + m_arcStart) * (m_arcLength+32);
+
+                float n2x = m_sourceUnit.unit.x_pos + (float)Math.Cos(m_arcTurn * m_count + m_arcStart) * (m_arcLength/2 + 32);
+                float n2y = m_sourceUnit.unit.y_pos + (float)Math.Sin(m_arcTurn * m_count + m_arcStart) * (m_arcLength/2 + 32);
+
                 if (Math.Abs(nx - u.unit.x_pos) <= 16 && Math.Abs(ny - u.unit.y_pos) <= 16)
                 {
-                    Debug.WriteLine("WOAH FUCK YEAHHHH!");
+                    m_hitUnits.Add(u);
+                    u.unit.TESTHITCHEAT();
+                }
+                else if (Math.Abs(n2x - u.unit.x_pos) <= 16 && Math.Abs(n2y - u.unit.y_pos) <= 16)
+                {
                     m_hitUnits.Add(u);
                     u.unit.TESTHITCHEAT();
                 }

@@ -30,8 +30,8 @@ namespace TestGame
 
         UnitInputHandler m_inputHandler;
 
-        const int SCREEN_WIDTH  = 800;
-        const int SCREEN_HEIGHT = 450;
+        const int SCREEN_WIDTH  = 1600;
+        const int SCREEN_HEIGHT = 900;
 
         public GameBase()
         {
@@ -77,23 +77,28 @@ namespace TestGame
 
             Unit a = new Unit(50, 80, 0, "Player");
             a.setTexture(p_icon, Color.LightBlue);
-            a.addTexture(Content.Load<Texture2D>("W_TestHammer"));
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.m_important = true;
             UnitController PLAYERCONTROLLER = new UnitController(a);
             BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER);
 
+            Weapon w = new Weapon("Warhammer", Content.Load<Texture2D>("W_TestHammer"));
+            w.m_unitHeld = PLAYERCONTROLLER;
+            w.m_color = Color.Turquoise;
+
+            a.m_weapon = w;
+
             Random ran = new Random();
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 25; i++)
             {
-                Unit l = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
+                Unit l = new Unit(ran.Next(250) + 250 * i, ran.Next(250) + 250 * i, 0);
                 l.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                 l.setTexture(p_icon, Color.White);
                 UnitController UCL = new UnitController(l);
                 BattleGroup BGX = new BattleGroup(UCL);
-                for (int j = 0; j < 10; j++)
+                for (int j = 0; j < 150; j++)
                 {
-                    Unit f = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
+                    Unit f = new Unit(ran.Next(250) + 250 * i, ran.Next(250) + 250 * i, 0);
                     f.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
                     f.setTexture(p_icon, Color.Green);
                     UnitController UCF = new UnitController(f);
@@ -123,7 +128,6 @@ namespace TestGame
 
             m_inputHandler = new UnitInputHandler(PlayerIndex.One, bb.getUnitController(a));
 
-            bb.TESTMETHODATTACK(0.0f);
 
 
         }
@@ -154,7 +158,9 @@ namespace TestGame
             bb.checkArcs(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
+            bb.TESTMETHODATTACK(getTimePercentage(gameTime));
             bb.setVisible();
+            bb.checkDiagnostics();
             base.Update(gameTime);
             
         }
