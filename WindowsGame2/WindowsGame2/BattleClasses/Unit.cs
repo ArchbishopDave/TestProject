@@ -13,7 +13,7 @@ namespace TestGame.BattleClasses
         public float y_pos { get; set; }
         public float facing { get; set; }
 
-        private Texture2D texture { get; set; }
+        private List<Texture2D> m_textures { get; set; }
         private Color alpha { get; set; }
 
         protected int x_dim { get; set; }
@@ -36,6 +36,8 @@ namespace TestGame.BattleClasses
 
             m_stats = new Dictionary<String, int>();
             m_important = false;
+
+            m_textures = new List<Texture2D>();
         }
 
         public Unit(float x, float y, float face)
@@ -71,8 +73,14 @@ namespace TestGame.BattleClasses
 
         public void setTexture(Texture2D tex, Color alph)
         {
-            texture = tex;
+            m_textures.Clear();
+            m_textures.Add(tex);
             alpha = alph;
+        }
+
+        public void addTexture(Texture2D tex)
+        {
+            m_textures.Add(tex);
         }
 
         public void turnDirection(bool right, float percentSecond)
@@ -109,7 +117,10 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb, int x, int y)
         {
-                sb.Draw(texture, new Vector2((int)x_pos-x, (int)y_pos-y), null, alpha, facing, new Vector2(x_dim/2, y_dim/2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+            foreach (Texture2D tex in m_textures)
+            {
+                sb.Draw(tex, new Vector2((int)x_pos - x, (int)y_pos - y), null, alpha, facing, new Vector2(tex.Width / 2, tex.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+            }
         }
 
         public int getHP()
@@ -135,7 +146,10 @@ namespace TestGame.BattleClasses
                 m_stats["HP"] = ran.Next(m_stats["MHP"]);
                 m_stats["FP"] = ran.Next(m_stats["MFP"]);
             }
-
+        }
+        public void TESTHITCHEAT()
+        {
+            alpha = Color.Red;
         }
     }
 }

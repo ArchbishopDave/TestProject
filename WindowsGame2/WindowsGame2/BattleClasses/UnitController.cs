@@ -8,6 +8,7 @@ namespace TestGame.BattleClasses
 {
     class UnitController : Controller
     {
+        public static BattleBase m_battleBase { get; set; }
         public Unit unit { get; set; }
         private CommandTimer action { get; set; }
 
@@ -77,7 +78,16 @@ namespace TestGame.BattleClasses
                 {
                     action = CommandTimer.getCommandFromTemplate("UNIT-DODGE");
                 }
+                if (command.Equals("UNIT-COMMAND-START-ATTACK"))
+                {
+                    swing();
+                }
             }
+        }
+
+        public void swing()
+        {
+            m_battleBase.addDamageArc(new DamageArc(this, 16.0f, 0f, 0.3f, 1.0f));
         }
     }
 }

@@ -30,8 +30,8 @@ namespace TestGame
 
         UnitInputHandler m_inputHandler;
 
-        const int SCREEN_WIDTH  = 1400;
-        const int SCREEN_HEIGHT = 800;
+        const int SCREEN_WIDTH  = 800;
+        const int SCREEN_HEIGHT = 450;
 
         public GameBase()
         {
@@ -51,10 +51,11 @@ namespace TestGame
             Window.Title = "Test Game";
             bb = new BattleBase();
 
-            InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
+            List<int> dimensions = InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
             CommandTimer.formTemplates();
-            BattleGroup.setConstants(1200, 800, 10);
+            BattleGroup.setConstants(dimensions[0], dimensions[1], 10);
+            UnitController.m_battleBase = bb;
 
             base.Initialize();
         }
@@ -75,25 +76,26 @@ namespace TestGame
             // TODO: use this.Content to load your game content here
 
             Unit a = new Unit(50, 80, 0, "Player");
-            a.setTexture(p_icon, Color.Yellow);
+            a.setTexture(p_icon, Color.LightBlue);
+            a.addTexture(Content.Load<Texture2D>("W_TestHammer"));
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.m_important = true;
             UnitController PLAYERCONTROLLER = new UnitController(a);
             BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER);
 
             Random ran = new Random();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 1; i++)
             {
                 Unit l = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
                 l.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                l.setTexture(p_icon, new Color(255, 255, 255));
+                l.setTexture(p_icon, Color.White);
                 UnitController UCL = new UnitController(l);
                 BattleGroup BGX = new BattleGroup(UCL);
-                for (int j = 0; j < 100; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     Unit f = new Unit(ran.Next(100) + 100 * i, ran.Next(100) + 100 * i, 0);
                     f.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                    f.setTexture(p_icon, new Color(i * 10, i * 10, i * 10));
+                    f.setTexture(p_icon, Color.Green);
                     UnitController UCF = new UnitController(f);
                     BGX.addUnit(UCF);
                 }
@@ -121,6 +123,8 @@ namespace TestGame
 
             m_inputHandler = new UnitInputHandler(PlayerIndex.One, bb.getUnitController(a));
 
+            bb.TESTMETHODATTACK(0.0f);
+
 
         }
 
@@ -147,7 +151,7 @@ namespace TestGame
             m_inputHandler.handleInputs(getTimePercentage(gameTime));
 
             bb.checkVisible(getTimePercentage(gameTime));
-            //bb.TESTMETHODCHARGE(getTimePercentage(gameTime));
+            bb.checkArcs(getTimePercentage(gameTime));
 
             barDisplayUnit.TESTCHANGER();
             bb.setVisible();
@@ -191,21 +195,25 @@ namespace TestGame
             return (float)gameTime.ElapsedGameTime.Milliseconds / 1000;
         }
 
-        private bool InitGraphicsMode(int iWidth, int iHeight, bool bFullScreen)
+        private List<int> InitGraphicsMode(int iWidth, int iHeight, bool bFullScreen)
         {
             // If we aren't using a full screen mode, the height and width of the window can
             // be set to anything equal to or smaller than the actual screen size.
             if (bFullScreen == false)
             {
-                if ((iWidth <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)
-                    && (iHeight <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
+                while (!(iWidth <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)
+                    || !(iHeight <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
                 {
-                    graphics.PreferredBackBufferWidth = iWidth;
-                    graphics.PreferredBackBufferHeight = iHeight;
-                    graphics.IsFullScreen = bFullScreen;
-                    graphics.ApplyChanges();
-                    return true;
+                    iWidth -= 16;
+                    iHeight -= 9;
                 }
+                graphics.PreferredBackBufferWidth = iWidth;
+                graphics.PreferredBackBufferHeight = iHeight;
+                graphics.IsFullScreen = bFullScreen;
+                graphics.ApplyChanges();
+                List<int> ret = new List<int>();
+                ret.Add(iWidth); ret.Add(iHeight);
+                return ret;
             }
             else
             {
@@ -223,11 +231,11 @@ namespace TestGame
                         graphics.PreferredBackBufferHeight = iHeight;
                         graphics.IsFullScreen = bFullScreen;
                         graphics.ApplyChanges();
-                        return true;
+                        return new List<int>();
                     }
                 }
             }
-            return false;
+            return new List<int>();
         }
 
 

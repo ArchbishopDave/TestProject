@@ -12,7 +12,7 @@ namespace TestGame.BattleClasses
 
         public bool m_display { get; set; }
 
-        List<UnitController> m_units;
+        public List<UnitController> m_units { get; set; }
         UnitController m_leader;
 
         static int XDRAWDISTANCE;

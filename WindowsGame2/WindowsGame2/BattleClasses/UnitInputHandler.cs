@@ -43,9 +43,10 @@ namespace TestGame.BattleClasses
             // Non Focus Equivilants
             else
             {
-
                 if (GamePad.GetState(m_index).IsButtonDown(Buttons.B))
                     temp.Add("UNIT-COMMAND-START-DODGE");
+                if (GamePad.GetState(m_index).IsButtonDown(Buttons.X))
+                    temp.Add("UNIT-COMMAND-START-ATTACK");
             }
 
             m_controller.handleCommand(temp, percentSecond);
