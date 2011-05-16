@@ -28,6 +28,8 @@ namespace TestGame.BattleClasses
 
         public Weapon m_weapon { get; set; }
 
+        public List<Animation> m_animations { get; set; }
+
         public Unit(float x, float y)
         {
             x_pos = x;
@@ -36,10 +38,11 @@ namespace TestGame.BattleClasses
             x_dim = 32;
             y_dim = 32;
 
-            m_stats = new Dictionary<String, int>();
             m_important = false;
 
+            m_stats = new Dictionary<String, int>();
             m_textures = new List<Texture2D>();
+            m_animations = new List<Animation>();
         }
 
         public Unit(float x, float y, float face)
@@ -130,6 +133,17 @@ namespace TestGame.BattleClasses
             }
             if ( m_weapon != null )
                 m_weapon.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing);
+
+            List<Animation> rm = new List<Animation>();
+            foreach (Animation a in m_animations)
+            {
+                if (!a.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing))
+                    rm.Add(a);
+            }
+            foreach (Animation a in rm)
+            {
+                m_animations.Remove(a);
+            }
         }
 
         public int getHP()

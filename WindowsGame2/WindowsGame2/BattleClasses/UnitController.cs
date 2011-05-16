@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using TestGame.BattleClasses;
+using System.Diagnostics;
 
 namespace TestGame.BattleClasses
 {
@@ -77,6 +79,10 @@ namespace TestGame.BattleClasses
                 if (command.Equals("UNIT-COMMAND-START-DODGE-FOCUS"))
                 {
                     action = CommandTimer.getCommandFromTemplate("UNIT-DODGE");
+                    Animation a = Animation.getAnimation("UNIT-CHARGE-EXPLODE");
+                    a.m_color = Color.SandyBrown;
+                    a.setSlide(0);
+                    unit.m_animations.Add(a);
                 }
                 if (command.Equals("UNIT-COMMAND-START-ATTACK"))
                 {

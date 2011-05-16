@@ -73,7 +73,7 @@ namespace TestGame
             bar_mid = Content.Load<Texture2D>("Bar_Mid");
             bar_font = Content.Load<SpriteFont>("BarFont");
 
-            // TODO: use this.Content to load your game content here
+            setupDefaultAnimations();
 
             Unit a = new Unit(50, 80, 0, "Player");
             a.setTexture(p_icon, Color.LightBlue);
@@ -160,7 +160,7 @@ namespace TestGame
             barDisplayUnit.TESTCHANGER();
             bb.TESTMETHODATTACK(getTimePercentage(gameTime));
             bb.setVisible();
-            bb.checkDiagnostics();
+           // bb.checkDiagnostics();
             base.Update(gameTime);
             
         }
@@ -176,7 +176,6 @@ namespace TestGame
             bb.drawUnits(spriteBatch);
             TEMPDRAWBAR();
             spriteBatch.End();
-            // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
@@ -199,6 +198,12 @@ namespace TestGame
         private float getTimePercentage(GameTime gameTime)
         {
             return (float)gameTime.ElapsedGameTime.Milliseconds / 1000;
+        }
+
+        public void setupDefaultAnimations()
+        {
+            Animation.initialize();
+            Animation.s_animations.Add("UNIT-CHARGE-EXPLODE", new Animation(Content.Load<Texture2D>("UM_CenterFlashTest"), 8, 1));
         }
 
         private List<int> InitGraphicsMode(int iWidth, int iHeight, bool bFullScreen)

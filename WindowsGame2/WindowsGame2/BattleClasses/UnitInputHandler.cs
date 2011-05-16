@@ -11,11 +11,13 @@ namespace TestGame.BattleClasses
     {
         private PlayerIndex m_index;
         private UnitController m_controller;
+        List<Buttons> m_heldButtons;
 
         public UnitInputHandler(PlayerIndex index, UnitController controller)
         {
             m_index = index;
             m_controller = controller;
+            m_heldButtons = new List<Buttons>();
         }
 
         public void handleInputs(float percentSecond)
@@ -37,19 +39,28 @@ namespace TestGame.BattleClasses
             // Focus Moves
             if (GamePad.GetState(m_index).Triggers.Right >= 0.5)
             {
-                if (GamePad.GetState(m_index).IsButtonDown(Buttons.B))
+                if (GamePad.GetState(m_index).IsButtonDown(Buttons.B) && !m_heldButtons.Contains(Buttons.B))
                     temp.Add("UNIT-COMMAND-START-DODGE-FOCUS");
             }
             // Non Focus Equivilants
             else
             {
-                if (GamePad.GetState(m_index).IsButtonDown(Buttons.B))
+                if (GamePad.GetState(m_index).IsButtonDown(Buttons.B) && !m_heldButtons.Contains(Buttons.B))
                     temp.Add("UNIT-COMMAND-START-DODGE");
-                if (GamePad.GetState(m_index).IsButtonDown(Buttons.X))
+                if (GamePad.GetState(m_index).IsButtonDown(Buttons.X) && !m_heldButtons.Contains(Buttons.X))
                     temp.Add("UNIT-COMMAND-START-ATTACK");
             }
 
+            m_heldButtons.Clear();
+            checkHeldButtons(Buttons.A); checkHeldButtons(Buttons.B); checkHeldButtons(Buttons.X); checkHeldButtons(Buttons.Y);
+
             m_controller.handleCommand(temp, percentSecond);
+        }
+
+        public void checkHeldButtons(Buttons button)
+        {
+            if (GamePad.GetState(m_index).IsButtonDown(button))
+                m_heldButtons.Add(button);
         }
     }
 }
