@@ -61,8 +61,12 @@ namespace TestGame.BattleClasses
             CommandTimer attack = new CommandTimer();
             attack.addCommand("UNIT-WAIT", 1.0f);
 
+            CommandTimer permDead = new CommandTimer();
+            permDead.addCommand("UNIT-DEAD", float.MaxValue);
+
             templateTimers.Add("UNIT-DODGE", dodge);
             templateTimers.Add("UNIT-ATTACK", attack);
+            templateTimers.Add("UNIT-DEAD", permDead);
         }
 
         public static CommandTimer getCommandFromTemplate(String template)

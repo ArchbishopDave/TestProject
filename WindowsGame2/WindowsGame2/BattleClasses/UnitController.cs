@@ -20,6 +20,8 @@ namespace TestGame.BattleClasses
         private float m_hpRestoreTimer { get; set; }
         private float m_hpRestoreTime { get; set; }
 
+        public BattleGroup m_battleGroup { get; set; }
+
         public UnitController(Unit u)
         {
             m_unit = u;
@@ -130,7 +132,7 @@ namespace TestGame.BattleClasses
                     {
                         action = CommandTimer.getCommandFromTemplate("UNIT-DODGE");
                         Animation a = Animation.getAnimation("UNIT-CHARGE-EXPLODE");
-                        a.m_color = Color.SandyBrown;
+                        a.m_color = Color.Yellow;
                         a.setSlide(0);
                         m_unit.m_animations.Add(a);
                     }
@@ -182,15 +184,6 @@ namespace TestGame.BattleClasses
                 canAttack = true;
             }
 
-            if (canAttack)
-            {
-                m_unit.alpha = Color.Yellow;
-            }
-            else
-            {
-                m_unit.alpha = Color.Blue;
-            }
-
             return canAttack;
         }
 
@@ -202,7 +195,44 @@ namespace TestGame.BattleClasses
 
         public void calculateDamageEffects(UnitController uc)
         {
+            Animation a = Animation.getAnimation("UNIT-CHARGE-EXPLODE");
+            a.m_color = Color.DarkRed;
+            a.setSlide(0);
+            m_unit.m_animations.Add(a);
+            m_unit.m_stats["HP"] -= 25;
+            m_unit.m_stats["CHP"] -= 5;
 
+            if ( m_unit.m_stats["HP"] <= 0 )
+            {
+                if ( m_unit.m_important )
+                {
+                    Random ran = new Random();
+                    if ( ran.Next(100) <= 10 )
+                    {
+                        m_unit.m_stats["CHP"] = (int)((float)m_unit.m_stats["CHP"] / 1.2);
+                        Debug.WriteLine("YOU HAVE BEEN WOUNDED");
+                    }
+                    else if ( ran.Next(100) >= 95 )
+                    {
+                        m_unit.m_stats["CHP"] = 0;
+                        action = CommandTimer.getCommandFromTemplate("UNIT-DEAD");
+                        Debug.WriteLine("YOU HAVE DIED LOL");
+                        m_unit.m_alive = false;
+                    }
+                    else {
+                        Debug.WriteLine("YOU HAVE BEEN ROUTED");
+                    }
+                    attemptHealHealth(9999);
+                    attemptHealFocus(9999);
+                    m_unit.x_pos = -100; m_unit.y_pos = -100;
+                }
+                else {
+                    m_unit.m_alive = false;
+                    m_unit.m_stats["CHP"] = 0;
+                    action = CommandTimer.getCommandFromTemplate("UNIT-DEAD");
+                }
+                uc.m_unit.m_killCount++;
+            }
         }
     }
 }

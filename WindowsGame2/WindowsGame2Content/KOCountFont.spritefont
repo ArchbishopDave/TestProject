@@ -9,15 +9,15 @@ with.
   <Asset Type="Graphics:FontDescription">
 
     <!--
-    Modify this string to change the font that will be imported. MOIRE old font
+    Modify this string to change the font that will be imported.
     -->
-    <FontName>Moire</FontName>
+    <FontName>Motorwerk</FontName>
 
     <!--
     Size is a float value, measured in points. Modify this value to change
-    the size of the font. 16 OLD SIZE
+    the size of the font.
     -->
-    <Size>16</Size>
+    <Size>32</Size>
 
     <!--
     Spacing is a float value, measured in pixels. Modify this value to change

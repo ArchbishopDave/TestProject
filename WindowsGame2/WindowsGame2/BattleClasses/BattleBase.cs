@@ -15,6 +15,8 @@ namespace TestGame.BattleClasses
         public BattleCamera m_camera { get; set; }
 
         private List<DamageArc> m_damageArcs;
+        private Dictionary<String, List<int>> m_factions { get; set; }
+        private Dictionary<int, String> m_factionNums { get; set; }
 
         public BattleBase()
         {
@@ -22,6 +24,9 @@ namespace TestGame.BattleClasses
             m_unitGroups = new Dictionary<string, BattleGroup>();
             m_camera = new BattleCamera(this);
             m_damageArcs = new List<DamageArc>();
+
+            m_factions = new Dictionary<string, List<int>>();
+            m_factionNums = new Dictionary<int, string>();
         }
 
         public void addUnit(UnitController u)
@@ -40,6 +45,26 @@ namespace TestGame.BattleClasses
                 unitList.Add(uc);
             }
             m_unitGroups.Add(name, bg);
+        }
+
+        public void addFaction(String faction, int facNum)
+        {
+            List<int> fac = new List<int>();
+            fac.Add(facNum);
+            m_factions.Add(faction, fac);
+            m_factionNums.Add(facNum, faction);
+        }
+        public void addFactionAlly(int hfac, int facNum)
+        {
+            m_factions[m_factionNums[hfac]].Add(facNum);
+        }
+        public void addFactionAlly(String faction, int facNum)
+        {
+            m_factions[faction].Add(facNum);
+        }
+        public bool checkFactionAlly(int faction, int faction2)
+        {
+            return m_factions[m_factionNums[faction]].Contains(faction2);
         }
 
         public void addDamageArc(DamageArc arc)
@@ -105,9 +130,9 @@ namespace TestGame.BattleClasses
                 }
                 else if (x % 2 == 0)
                 {
-                    if (x % 3 == 1)
+                    if (x % 4 == 0)
                         forward.Add("UNIT-TURN-RIGHT");
-                    else if (x % 3 == 2)
+                    else if (x % 4 == 2)
                         forward.Add("UNIT-TURN-LEFT");
                     uc.handleCommand(forward, percentSecond);
                 }
@@ -146,7 +171,7 @@ namespace TestGame.BattleClasses
                 {
                     foreach (KeyValuePair<String, BattleGroup> bg in m_unitGroups)
                     {
-                        if (bg.Value.m_display)
+                        if (bg.Value.m_display && !checkFactionAlly(arc.m_sourceUnit.m_battleGroup.m_factionNumber, bg.Value.m_factionNumber))
                         {
                             foreach (UnitController uc in bg.Value.m_units)
                             {

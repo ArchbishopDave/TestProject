@@ -25,6 +25,7 @@ namespace TestGame
         Texture2D bar_edge;
         Texture2D bar_mid;
         SpriteFont bar_font;
+        SpriteFont ko_font;
 
         Unit barDisplayUnit;
 
@@ -72,15 +73,16 @@ namespace TestGame
             bar_edge = Content.Load<Texture2D>("Bar_Edge");
             bar_mid = Content.Load<Texture2D>("Bar_Mid");
             bar_font = Content.Load<SpriteFont>("BarFont");
+            ko_font = Content.Load<SpriteFont>("KOCountFont");
 
             setupDefaultAnimations();
 
             Unit a = new Unit(50, 80, 0, "Player");
-            a.setTexture(p_icon, Color.LightBlue);
+            a.setTexture(p_icon, Color.Azure);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.m_important = true;
             UnitController PLAYERCONTROLLER = new UnitController(a);
-            BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER);
+            BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER, 1);
 
             Weapon.addNewWeaponTemplate("Warhammer", Color.PowderBlue, Content.Load<Texture2D>("W_TestHammer"), new Dictionary<string, int>());
             Weapon.addSwingToWeapon("Warhammer", 16.0f, 1.0f, -1.0f, 1.0f, 10);
@@ -90,41 +92,57 @@ namespace TestGame
             a.m_weapon = w;
 
             Random ran = new Random();
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 6; i++)
             {
-                Unit l = new Unit(ran.Next(600) + 600 * i, ran.Next(600) + 50 * i, 0);
-                l.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                l.setTexture(p_icon, Color.White);
+                Unit l = new Unit(ran.Next(600) - 300 * i, ran.Next(300) + 50 * i, 0);
+                l.setStats(200, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                l.setTexture(p_icon, Color.Blue);
                 UnitController UCL = new UnitController(l);
-                BattleGroup BGX = new BattleGroup(UCL);
+                BattleGroup BGX = new BattleGroup(UCL, 1);
                 Weapon lw = Weapon.getWeaponFromTemplate("Warhammer");
                 lw.m_unitHeld = UCL;
                 l.m_weapon = lw;
                 for (int j = 0; j < 150; j++)
                 {
-                    Unit f = new Unit(ran.Next(600) + 600 * i, ran.Next(600) + 50 * i, 0);
-                    f.setStats(100, 50, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                    f.setTexture(p_icon, Color.White);
+                    Unit f = new Unit(ran.Next(300) - 300 * i, ran.Next(300) + 50 * i, 0);
+                    f.setStats(60, 50, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                    f.setTexture(p_icon, Color.LightBlue);
                     UnitController UCF = new UnitController(f);
                     BGX.addUnit(UCF);
                     Weapon fw = Weapon.getWeaponFromTemplate("Warhammer");
                     fw.m_unitHeld = UCF;
                     f.m_weapon = fw;
                 }
-                bb.addUnitGroup("Fodder:"+i,BGX);
+                bb.addUnitGroup("FriendlyFodder:"+i,BGX);
             }
 
-            /*for ( int i = 0; i < 15000; i++ )
+            for (int i = 0; i < 8; i++)
             {
-                Unit x = new Unit(ran.Next(2000)+600, ran.Next(2000)+600, 3.99f+((float)ran.Next(50))/100.0f);
-                x.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                x.setTexture(p_icon, Color.Cyan);
-                bb.addUnit(x);
-                Unit y = new Unit(ran.Next(2000) - 2000, ran.Next(2000) - 2000, 0.6f + ((float)ran.Next(50)) / 100.0f);
-                y.setStats(100, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
-                y.setTexture(p_icon, Color.DarkMagenta);
-                bb.addUnit(y);
-            }*/
+                Unit l = new Unit(ran.Next(300) + 300 * i, ran.Next(300) + 50 * i, 3.0f);
+                l.setStats(200, 100, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                l.setTexture(p_icon, Color.Red);
+                UnitController UCL = new UnitController(l);
+                BattleGroup BGX = new BattleGroup(UCL, 2);
+                Weapon lw = Weapon.getWeaponFromTemplate("Warhammer");
+                lw.m_unitHeld = UCL;
+                l.m_weapon = lw;
+                for (int j = 0; j < 200; j++)
+                {
+                    Unit f = new Unit(ran.Next(300) + 300 * i, ran.Next(300) + 50 * i, 3.0f);
+                    f.setStats(50, 50, 100, 100, 100, 100, 100, 60, 1, 0, 4000);
+                    f.setTexture(p_icon, Color.LightPink);
+                    UnitController UCF = new UnitController(f);
+                    BGX.addUnit(UCF);
+                    Weapon fw = Weapon.getWeaponFromTemplate("Warhammer");
+                    fw.m_unitHeld = UCF;
+                    f.m_weapon = fw;
+                }
+                bb.addUnitGroup("Fodder:" + i, BGX);
+            }
+
+            bb.addFaction("Player Army", 1);
+            bb.addFaction("Enemy Army", 2);
+
             bb.addUnit(PLAYERCONTROLLER);
 
             barDisplayUnit = a;
@@ -166,7 +184,7 @@ namespace TestGame
             bb.updateGameState(getTimePercentage(gameTime));
 
             bb.setVisible();
-bb.checkDiagnostics();
+//bb.checkDiagnostics();
             base.Update(gameTime);
             
         }
@@ -199,6 +217,8 @@ bb.checkDiagnostics();
             spriteBatch.Draw(bar_mid, new Vector2(Start, Height+32), null, Color.LightGreen, 0.0f, new Vector2(0, 0), new Vector2(((float)FP - 16) / 32.0f, 0.75f), SpriteEffects.None, 0.0f);
             spriteBatch.Draw(bar_edge, new Vector2(FP + 16, Height+32), null, Color.LightGreen, 0.0f, new Vector2(0, 0), new Vector2(0.5f, 0.75f), SpriteEffects.None, 0.0f);
             spriteBatch.DrawString(bar_font, "" + FP, new Vector2(Start + 8, Height + 32), new Color(0, 55, 0));
+
+            spriteBatch.DrawString(ko_font, "KOs: " + barDisplayUnit.m_killCount, new Vector2(GraphicsDevice.Viewport.Width - 164, Height+16), Color.Black);
         }
 
         private float getTimePercentage(GameTime gameTime)

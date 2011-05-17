@@ -9,7 +9,7 @@ namespace TestGame.BattleClasses
 {
     class DamageArc
     {
-        private UnitController m_sourceUnit;
+        public UnitController m_sourceUnit { get; set; }
         private List<UnitController> m_hitUnits;
 
         private static int m_arcCount = 4;
@@ -73,8 +73,7 @@ namespace TestGame.BattleClasses
                 if( (Math.Abs(nx - u.m_unit.x_pos) <= 16 && Math.Abs(ny - u.m_unit.y_pos) <= 16) || (Math.Abs(n2x - u.m_unit.x_pos) <= 16 && Math.Abs(n2y - u.m_unit.y_pos) <= 16) )
                 {
                     m_hitUnits.Add(u);
-                    u.m_unit.alpha = Color.Red;
-                    u.m_unit.m_stats["HP"] -= 10;
+                    u.calculateDamageEffects(m_sourceUnit);
                 }
             }
 

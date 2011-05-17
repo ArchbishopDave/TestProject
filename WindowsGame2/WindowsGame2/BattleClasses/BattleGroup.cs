@@ -21,15 +21,20 @@ namespace TestGame.BattleClasses
 
         private float m_timeDisplayed;
 
-        public BattleGroup(UnitController uc)
+        public int m_factionNumber { get; set; }
+
+        public BattleGroup(UnitController uc, int faction)
         {
             m_display = false;
 
             m_leader = uc;
+            m_factionNumber = faction;
 
             m_units = new List<UnitController>();
             m_units.Add(uc);
             m_timeDisplayed = 0.0f;
+
+            uc.m_battleGroup = this;
         }
 
         public static void setConstants(int X, int Y, int CR)
@@ -42,6 +47,7 @@ namespace TestGame.BattleClasses
         public void addUnit(UnitController u)
         {
             m_units.Add(u);
+            u.m_battleGroup = this;
         }
 
         public bool checkDisplayAdd(int x, int y)

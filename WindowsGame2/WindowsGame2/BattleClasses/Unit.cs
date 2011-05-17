@@ -14,21 +14,23 @@ namespace TestGame.BattleClasses
         public float facing { get; set; }
 
         private List<Texture2D> m_textures { get; set; }
-        public Color alpha { get; set; }
+        public Color m_color { get; set; }
 
         protected int x_dim { get; set; }
         protected int y_dim { get; set; }
 
+        public String m_name { get; set; }
+
         public Dictionary<String, int> m_stats { get; set; }
         public float turnSpeed { get; set; }
 
-        public String m_name { get; set; }
+        public Weapon m_weapon { get; set; }
+        public List<Animation> m_animations { get; set; }
 
         public bool m_important { get; set; }
-
-        public Weapon m_weapon { get; set; }
-
-        public List<Animation> m_animations { get; set; }
+        public bool m_alive { get; set; }
+        public int m_healthStatus { get; set; }
+        public int m_killCount { get; set; }
 
         public Unit(float x, float y)
         {
@@ -43,6 +45,9 @@ namespace TestGame.BattleClasses
             m_stats = new Dictionary<String, int>();
             m_textures = new List<Texture2D>();
             m_animations = new List<Animation>();
+
+            m_alive = true;
+            m_healthStatus = 100;
         }
 
         public Unit(float x, float y, float face)
@@ -81,7 +86,7 @@ namespace TestGame.BattleClasses
         {
             m_textures.Clear();
             m_textures.Add(tex);
-            alpha = alph;
+            m_color = alph;
         }
 
         public void addTexture(Texture2D tex)
@@ -128,22 +133,25 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb, int x, int y)
         {
-            foreach (Texture2D tex in m_textures)
+            if (m_alive)
             {
-                sb.Draw(tex, new Vector2((int)x_pos - x, (int)y_pos - y), null, alpha, facing, new Vector2(tex.Width / 2, tex.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
-            }
-            if ( m_weapon != null )
-                m_weapon.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing);
+                foreach (Texture2D tex in m_textures)
+                {
+                    sb.Draw(tex, new Vector2((int)x_pos - x, (int)y_pos - y), null, m_color, facing, new Vector2(tex.Width / 2, tex.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+                }
+                if (m_weapon != null)
+                    m_weapon.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing);
 
-            List<Animation> rm = new List<Animation>();
-            foreach (Animation a in m_animations)
-            {
-                if (!a.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing))
-                    rm.Add(a);
-            }
-            foreach (Animation a in rm)
-            {
-                m_animations.Remove(a);
+                List<Animation> rm = new List<Animation>();
+                foreach (Animation a in m_animations)
+                {
+                    if (!a.DRAW(sb, (int)x_pos - x, (int)y_pos - y, facing))
+                        rm.Add(a);
+                }
+                foreach (Animation a in rm)
+                {
+                    m_animations.Remove(a);
+                }
             }
         }
 
