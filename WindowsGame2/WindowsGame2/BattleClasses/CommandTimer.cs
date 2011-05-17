@@ -54,10 +54,15 @@ namespace TestGame.BattleClasses
         public static void formTemplates()
         {
             templateTimers = new Dictionary<string, CommandTimer>();
+
             CommandTimer dodge = new CommandTimer();
             dodge.addCommand("UNIT-DODGE", 0.4f);
 
+            CommandTimer attack = new CommandTimer();
+            attack.addCommand("UNIT-WAIT", 1.0f);
+
             templateTimers.Add("UNIT-DODGE", dodge);
+            templateTimers.Add("UNIT-ATTACK", attack);
         }
 
         public static CommandTimer getCommandFromTemplate(String template)

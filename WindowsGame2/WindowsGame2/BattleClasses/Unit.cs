@@ -19,10 +19,10 @@ namespace TestGame.BattleClasses
         protected int x_dim { get; set; }
         protected int y_dim { get; set; }
 
-        Dictionary<String, int> m_stats;
-        private float turnSpeed { get; set; }
+        public Dictionary<String, int> m_stats { get; set; }
+        public float turnSpeed { get; set; }
 
-        private String m_name { get; set; }
+        public String m_name { get; set; }
 
         public bool m_important { get; set; }
 
@@ -61,6 +61,7 @@ namespace TestGame.BattleClasses
         {
             m_stats.Add("HP", hp);
             m_stats.Add("MHP", hp);
+            m_stats.Add("CHP", hp);
             m_stats.Add("FP", fp);
             m_stats.Add("MFP",fp);
             m_stats.Add("POWER",pow);
@@ -146,16 +147,6 @@ namespace TestGame.BattleClasses
             }
         }
 
-        public int getHP()
-        {
-            return m_stats["HP"];
-        }
-
-        public int getFP()
-        {
-            return m_stats["FP"];
-        }
-
         public String getName()
         {
             return m_name;
@@ -169,10 +160,6 @@ namespace TestGame.BattleClasses
                 m_stats["HP"] = ran.Next(m_stats["MHP"]);
                 m_stats["FP"] = ran.Next(m_stats["MFP"]);
             }
-        }
-        public void TESTHITCHEAT()
-        {
-            alpha = Color.Red;
         }
     }
 }

@@ -46,7 +46,7 @@ namespace TestGame.BattleClasses
 
         public bool checkDisplayAdd(int x, int y)
         {
-            if (Math.Abs(x - m_leader.unit.x_pos) <= XDRAWDISTANCE && Math.Abs(y - m_leader.unit.y_pos) <= YDRAWDISTANCE)
+            if (Math.Abs(x - m_leader.m_unit.x_pos) <= XDRAWDISTANCE && Math.Abs(y - m_leader.m_unit.y_pos) <= YDRAWDISTANCE)
             {
                 m_display = true;
             }
@@ -63,7 +63,7 @@ namespace TestGame.BattleClasses
                 {
                     foreach (UnitController u in m_units)
                     {
-                        if (Math.Abs(x - u.unit.x_pos) <= XDRAWDISTANCE && Math.Abs(y - u.unit.y_pos) <= YDRAWDISTANCE)
+                        if (Math.Abs(x - u.m_unit.x_pos) <= XDRAWDISTANCE && Math.Abs(y - u.m_unit.y_pos) <= YDRAWDISTANCE)
                         {
                             m_timeDisplayed = 0;
                             return;
@@ -81,7 +81,7 @@ namespace TestGame.BattleClasses
             {
                 foreach (UnitController u in m_units)
                 {
-                    u.unit.DRAW(sb, modx, mody);
+                    u.m_unit.DRAW(sb, modx, mody);
                 }
             }
         }
