@@ -59,7 +59,7 @@ namespace TestGame.BattleClasses
             dodge.addCommand("UNIT-DODGE", 0.4f);
 
             CommandTimer attack = new CommandTimer();
-            attack.addCommand("UNIT-WAIT", 1.0f);
+            attack.addCommand("UNIT-WAIT", 0.6f);
 
             CommandTimer permDead = new CommandTimer();
             permDead.addCommand("UNIT-DEAD", float.MaxValue);
@@ -72,6 +72,13 @@ namespace TestGame.BattleClasses
         public static CommandTimer getCommandFromTemplate(String template)
         {
             return new CommandTimer(templateTimers[template]);
+        }
+
+        public static CommandTimer getAttackCommand(float attackLength)
+        {
+            CommandTimer attack = new CommandTimer();
+            attack.addCommand("UNIT-ATTACK", attackLength);
+            return attack;
         }
     }
 }

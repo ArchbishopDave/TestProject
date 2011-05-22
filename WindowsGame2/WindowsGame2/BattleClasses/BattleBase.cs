@@ -47,6 +47,7 @@ namespace TestGame.BattleClasses
             m_unitGroups.Add(name, bg);
         }
 
+        #region Factions
         public void addFaction(String faction, int facNum)
         {
             List<int> fac = new List<int>();
@@ -66,6 +67,7 @@ namespace TestGame.BattleClasses
         {
             return m_factions[m_factionNums[faction]].Contains(faction2);
         }
+        #endregion
 
         public void addDamageArc(DamageArc arc)
         {
@@ -74,18 +76,16 @@ namespace TestGame.BattleClasses
 
         public void updateGameState(float percentSecond)
         {
+            Random ran = new Random();
             foreach (KeyValuePair<String, BattleGroup> bg in m_unitGroups)
             {
                 if (bg.Value.m_display)
-                {
-                    int c = 0;
-                    Random ran = new Random();
+                {       
                     foreach (UnitController uc in bg.Value.m_units)
                     {
                         uc.updateRestore(percentSecond);
                         // ( TEST )
                         TESTFAKEAI(uc, percentSecond, ran);
-                        c++;
                     }
                 }
             }
@@ -138,7 +138,6 @@ namespace TestGame.BattleClasses
                 }
                 else
                 {
-                    // Debug.WriteLine("NO SWING TIME");
                     uc.handleCommand(blank, percentSecond);
                 }
             }

@@ -12,6 +12,7 @@ namespace TestGame.BattleClasses
     {
         public static BattleBase m_battleBase { get; set; }
         public Unit m_unit { get; set; }
+        public UnitController m_target { get; set; }
         private CommandTimer action { get; set; }
         private int m_swingCount { get; set; }
 
@@ -20,7 +21,11 @@ namespace TestGame.BattleClasses
         private float m_hpRestoreTimer { get; set; }
         private float m_hpRestoreTime { get; set; }
 
+        private float m_movementModifier { get; set; }
+
         public BattleGroup m_battleGroup { get; set; }
+
+        public static float DAMAGECONSTANT = 0.75f;
 
         public UnitController(Unit u)
         {
@@ -91,15 +96,18 @@ namespace TestGame.BattleClasses
                     action = null;
                 }
             }
+        }
 
-            foreach(String command in commands )
+        private void handleInnerCommand(List<String> commands, float percentSecond)
+        {
+            foreach (String command in commands)
             {
-                if ( command.Equals("UNIT-TURN-RIGHT") )
+                if (command.Equals("UNIT-TURN-RIGHT"))
                 {
                     m_unit.turnDirection(true, percentSecond);
                 }
 
-                if ( command.Equals("UNIT-TURN-LEFT") )
+                if (command.Equals("UNIT-TURN-LEFT"))
                 {
                     m_unit.turnDirection(false, percentSecond);
                 }
@@ -122,7 +130,7 @@ namespace TestGame.BattleClasses
 
                 if (command.Equals("UNIT-COMMAND-START-DODGE"))
                 {
-                    if ( tryDodge(false) )
+                    if (tryDodge(false))
                         action = CommandTimer.getCommandFromTemplate("UNIT-DODGE");
                 }
 
@@ -142,7 +150,6 @@ namespace TestGame.BattleClasses
                 {
                     if (tryAttack(false))
                     {
-                        action = CommandTimer.getCommandFromTemplate("UNIT-ATTACK");
                         swingWeapon();
                     }
                 }
@@ -190,7 +197,9 @@ namespace TestGame.BattleClasses
         public void swingWeapon()
         {
             Dictionary<String, float> swingData = m_unit.m_weapon.m_swingData[m_swingCount];
+            m_unit.m_weapon.swingWeapon(m_swingCount);
             m_battleBase.addDamageArc(new DamageArc(this, swingData["ARC-DIST"], swingData["ARC-START"], swingData["ARC-END"], swingData["ARC-TIME"]));
+            action = CommandTimer.getAttackCommand(swingData["ARC-TIME"]);
         }
 
         public void calculateDamageEffects(UnitController uc)
@@ -199,11 +208,19 @@ namespace TestGame.BattleClasses
             a.m_color = Color.DarkRed;
             a.setSlide(0);
             m_unit.m_animations.Add(a);
-            m_unit.m_stats["HP"] -= 25;
-            m_unit.m_stats["CHP"] -= 5;
+
+            float power = ((float)uc.m_unit.m_stats["POWER"] / (float)m_unit.m_stats["ENDURE"]);
+            power = (float) Math.Pow((double)power, (double)DAMAGECONSTANT);
+            power *= uc.m_unit.m_weapon.m_swingData[uc.m_swingCount]["BASE-DAMAGE"];
+
+            m_unit.m_stats["HP"] -= (int)Math.Ceiling(power);
+            m_unit.m_stats["CHP"] -= (int)Math.Ceiling(power/4);
+
+            uc.trySetTarget(this);
 
             if ( m_unit.m_stats["HP"] <= 0 )
             {
+                uc.tryRemoveTarget(this);
                 if ( m_unit.m_important )
                 {
                     Random ran = new Random();
@@ -233,6 +250,43 @@ namespace TestGame.BattleClasses
                 }
                 uc.m_unit.m_killCount++;
             }
+
+
+            if (m_unit.m_stats["CHP"] <= 0)
+            {
+                m_unit.m_alive = false;
+                action = CommandTimer.getCommandFromTemplate("UNIT-DEAD");
+            }
+
         }
+
+        #region targeting
+        public bool hasTarget()
+        {
+            return !(m_target == null);
+        }
+
+        public void trySetTarget(UnitController uc)
+        {
+            if (m_target == null || m_target.m_unit.m_stats["HP"] <= 0)
+            {
+                m_target = uc;
+            }
+
+            else
+            {
+                if (m_target.m_unit.m_stats["LEVEL"] < uc.m_unit.m_stats["LEVEL"])
+                {
+                    m_target = uc;
+                }
+            }
+        }
+
+        public void tryRemoveTarget(UnitController uc)
+        {
+            if (uc == m_target)
+                m_target = null;
+        }
+        #endregion
     }
 }

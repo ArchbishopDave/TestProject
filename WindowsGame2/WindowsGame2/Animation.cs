@@ -22,6 +22,10 @@ namespace TestGame
         private int m_curFrame { get; set; }
         private int m_curSlide { get; set; }
 
+        public float m_playSpeed { get; set; }
+
+        public String m_animationName { get; set; }
+
         private Texture2D m_texture;
 
         public static void initialize()
@@ -34,8 +38,9 @@ namespace TestGame
             return new Animation(s_animations[s]);
         }
 
-        public Animation(Texture2D tex, int frames, int slides)
+        public Animation(String name, Texture2D tex, int frames, int slides, float speed)
         {
+            m_animationName = name;
             m_texture = tex;
             m_frames = frames;
             m_slides = slides;
@@ -44,10 +49,12 @@ namespace TestGame
             m_loop = false;
             m_color = Color.White;
             m_running = false;
+            m_playSpeed = speed;
         }
 
         protected Animation(Animation a)
         {
+            m_animationName = a.m_animationName;
             m_texture = a.m_texture;
             m_frames = a.m_frames;
             m_slides = a.m_slides;
@@ -56,6 +63,7 @@ namespace TestGame
             m_loop = a.m_loop;
             m_color = a.m_color;
             m_running = false;
+            m_playSpeed = a.m_playSpeed;
         }
 
         public void setSlide(int slide)
@@ -70,12 +78,17 @@ namespace TestGame
         {
             if (m_running)
             {
-                sb.Draw(m_texture, new Vector2(x, y), new Rectangle((int)m_curFrame * (m_texture.Width / m_frames), (int)m_curSlide * (m_texture.Height / m_slides),
+                sb.Draw(m_texture, new Vector2(x, y), new Rectangle((int)((int)(m_curFrame/m_playSpeed)) * (m_texture.Width / m_frames), (int)m_curSlide * (m_texture.Height / m_slides),
                     (int)m_texture.Width / m_frames, (int)m_texture.Height / m_slides),
-                    m_color, facing, new Vector2(m_texture.Width / 16, m_texture.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+                    m_color, facing, new Vector2(m_texture.Width / (m_frames*2), m_texture.Height / (m_slides*2)), new Vector2(1, 1), SpriteEffects.None, 0.0f);
                 m_curFrame++;
-                if (m_curFrame == m_frames)
-                    m_running = false;
+                if ((int)(m_curFrame/m_playSpeed) == m_frames)
+                {
+                    if (!m_loop)
+                        m_running = false;
+                    else
+                        m_curFrame = 0;
+                }
             }
             return m_running;
         }

@@ -52,7 +52,7 @@ namespace TestGame.BattleClasses
             if (u == m_sourceUnit)
                 return;
 
-            if (m_hitUnits.Contains(u))
+            if (m_hitUnits.Contains(u) || !u.m_unit.m_alive)
                 return;
 
             // Need a get radius method for unit controllers to make sure this actually works.

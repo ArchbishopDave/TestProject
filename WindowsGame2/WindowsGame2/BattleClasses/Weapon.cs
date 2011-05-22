@@ -12,9 +12,21 @@ namespace TestGame.BattleClasses
         private String m_name { get; set; }
         public UnitController m_unitHeld { get; set; }
 
-        public Color m_color { get; set; }
+        private Color color;
+        public Color m_color
+        {
+            get
+            {
+                return color;
+            }
+            set
+            {
+                color = value;
+                this.m_animation.m_color = value;
+            }
+        }
 
-        private Texture2D m_texture { get; set; }
+        private Animation m_animation { get; set; }
 
         public Dictionary<String, int> m_stats { get; set; }
 
@@ -23,17 +35,17 @@ namespace TestGame.BattleClasses
 
         public static Dictionary<String, Weapon> s_weaponTemplates { get; set; }
 
-        public Weapon(String name, Texture2D tex)
+        public Weapon(String name, Animation animation)
         {
             m_name = name;
-            m_texture = tex;
+            m_animation = animation;
         }
 
         public Weapon(Weapon w)
         {
             m_name = w.m_name;
+            m_animation = Animation.getAnimation(w.m_animation.m_animationName);
             m_color = w.m_color;
-            m_texture = w.m_texture;
             m_stats = new Dictionary<string,int>(w.m_stats);
             m_swingCount = w.m_swingCount;
             m_swingData = new List<Dictionary<string,float>>(w.m_swingData);
@@ -41,7 +53,17 @@ namespace TestGame.BattleClasses
 
         public void DRAW(SpriteBatch sb, int x, int y, float facing)
         {
-            sb.Draw(m_texture, new Vector2(x, y), null, m_color, facing, new Vector2(m_texture.Width / 2, m_texture.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+            if (!m_animation.DRAW(sb, x, y, facing))
+            {
+                m_animation.setSlide(0);
+                m_animation.DRAW(sb, x, y, facing);
+            }
+            //sb.Draw(m_animation, new Vector2(x, y), null, m_color, facing, new Vector2(m_animation.Width / 2, m_animation.Height / 2), new Vector2(1, 1), SpriteEffects.None, 0.0f);
+        }
+
+        public void swingWeapon(int swing)
+        {
+            m_animation.setSlide(swing+1);
         }
 
         public Dictionary<String, float> getSwingData(int swing)
@@ -54,7 +76,7 @@ namespace TestGame.BattleClasses
             return new Weapon(s_weaponTemplates[name]);
         }
 
-        public static void addNewWeaponTemplate(String name, Color color, Texture2D tex, Dictionary<String, int> stats)
+        public static void addNewWeaponTemplate(String name, Color color, Animation tex, Dictionary<String, int> stats)
         {
             if (s_weaponTemplates == null)
                 s_weaponTemplates = new Dictionary<string, Weapon>();
