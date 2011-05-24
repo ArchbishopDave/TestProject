@@ -7,7 +7,7 @@ namespace TestGame.BattleClasses
 {
     class CommandTimer
     {
-        private List<String> commands { get; set; }
+        public List<String> commands { get; set; }
         private List<float> times { get; set; }
 
         private int currentEvent { get; set; }
@@ -59,7 +59,7 @@ namespace TestGame.BattleClasses
             dodge.addCommand("UNIT-DODGE", 0.4f);
 
             CommandTimer attack = new CommandTimer();
-            attack.addCommand("UNIT-WAIT", 0.6f);
+            attack.addCommand("UNIT-ATTACK-WAITING", 0.5f);
 
             CommandTimer permDead = new CommandTimer();
             permDead.addCommand("UNIT-DEAD", float.MaxValue);

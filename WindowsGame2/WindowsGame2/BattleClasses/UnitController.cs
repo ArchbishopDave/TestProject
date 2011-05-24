@@ -22,6 +22,10 @@ namespace TestGame.BattleClasses
         private float m_hpRestoreTime { get; set; }
 
         private float m_movementModifier { get; set; }
+        private float m_turnMoveModifier { get; set; }
+
+        private bool m_swinging { get; set; }
+        private bool m_swingAgain { get; set; }
 
         public BattleGroup m_battleGroup { get; set; }
 
@@ -38,6 +42,8 @@ namespace TestGame.BattleClasses
             // Calculation for restore time is done here.
             m_fpRestoreTime = 60.0f / u.m_stats["MFP"];
             m_hpRestoreTime = 4.0f;
+
+            m_swingAgain = false;
         }
 
         public void updateRestore(float percentSecond)
@@ -75,6 +81,10 @@ namespace TestGame.BattleClasses
 
         public void handleCommand(List<String> commands, float percentSecond)
         {
+            m_movementModifier = 1.0f;
+            m_turnMoveModifier = 1.0f;
+            m_swinging = false;
+
             foreach ( String command in commands )
             {
                 if ( command.Contains("FOCUS"))
@@ -88,14 +98,42 @@ namespace TestGame.BattleClasses
                 String comm = action.getCommand(percentSecond);
                 if (!comm.Equals("NO-OP"))
                 {
-                    commands = new List<String>();
-                    commands.Add(comm);
+                    if (comm.Contains("ATTACK"))
+                    {
+                        m_swinging = true;
+                        m_movementModifier = 0.2f;
+                        m_turnMoveModifier = 0.5f;
+                    }
+                    else
+                    {
+                        commands = new List<String>();
+                        commands.Add(comm);
+                    }
                 }
                 else
                 {
-                    action = null;
+                    if (m_swingAgain)
+                    {
+                        m_swingCount++;
+                        action = null;
+                        m_swingAgain = false;
+                        swingWeapon();
+                    }
+                    else
+                    {
+                        foreach (String com in action.commands)
+                        {
+                            if (com.Contains("ATTACK"))
+                            {
+                                holsterWeapon(m_swingCount);
+                            }
+                        }
+                        action = null;
+                        m_swingCount = 0;
+                    }
                 }
             }
+            handleInnerCommand(commands, percentSecond);
         }
 
         private void handleInnerCommand(List<String> commands, float percentSecond)
@@ -104,22 +142,22 @@ namespace TestGame.BattleClasses
             {
                 if (command.Equals("UNIT-TURN-RIGHT"))
                 {
-                    m_unit.turnDirection(true, percentSecond);
+                    m_unit.turnDirection(true, percentSecond * m_turnMoveModifier);
                 }
 
                 if (command.Equals("UNIT-TURN-LEFT"))
                 {
-                    m_unit.turnDirection(false, percentSecond);
+                    m_unit.turnDirection(false, percentSecond * m_turnMoveModifier);
                 }
 
                 if (command.Equals("UNIT-MOVE-FORWARD"))
                 {
-                    m_unit.moveDirection(true, percentSecond);
+                    m_unit.moveDirection(true, percentSecond * m_movementModifier);
                 }
 
                 if (command.Equals("UNIT-MOVE-BACKWARD"))
                 {
-                    m_unit.moveDirection(false, percentSecond);
+                    m_unit.moveDirection(false, percentSecond * m_movementModifier);
                 }
 
                 if (command.Equals("UNIT-DODGE"))
@@ -148,9 +186,15 @@ namespace TestGame.BattleClasses
 
                 if (command.Equals("UNIT-COMMAND-START-ATTACK"))
                 {
-                    if (tryAttack(false))
+                    if (m_swinging)
+                    {
+                        m_swingAgain = true;
+                    }
+
+                    if (!m_swinging && tryAttack(false))
                     {
                         swingWeapon();
+                        m_swingAgain = false;
                     }
                 }
             }
@@ -196,10 +240,23 @@ namespace TestGame.BattleClasses
 
         public void swingWeapon()
         {
-            Dictionary<String, float> swingData = m_unit.m_weapon.m_swingData[m_swingCount];
-            m_unit.m_weapon.swingWeapon(m_swingCount);
-            m_battleBase.addDamageArc(new DamageArc(this, swingData["ARC-DIST"], swingData["ARC-START"], swingData["ARC-END"], swingData["ARC-TIME"]));
-            action = CommandTimer.getAttackCommand(swingData["ARC-TIME"]);
+            if (m_unit.m_weapon.m_swingCount > m_swingCount)
+            {
+                Dictionary<String, float> swingData = m_unit.m_weapon.m_swingData[m_swingCount];
+                m_unit.m_weapon.swingWeapon(m_swingCount);
+                m_battleBase.addDamageArc(new DamageArc(this, swingData["ARC-DIST"], swingData["ARC-START"], swingData["ARC-END"], swingData["ARC-TIME"]));
+                action = CommandTimer.getAttackCommand(swingData["ARC-TIME"]);
+            }
+            else
+            {
+                holsterWeapon(m_swingCount-1);
+                m_swingCount = 0;
+            }
+        }
+
+        public void holsterWeapon(int count)
+        {
+            m_unit.m_weapon.holsterWeapon(count);
         }
 
         public void calculateDamageEffects(UnitController uc)

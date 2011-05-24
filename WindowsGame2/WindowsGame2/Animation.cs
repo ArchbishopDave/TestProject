@@ -14,19 +14,19 @@ namespace TestGame
         public bool m_loop { get; set; }
         public Color m_color { get; set; }
 
-        private bool m_running { get; set; }
+        protected bool m_running { get; set; }
 
-        private int m_frames { get; set; }
-        private int m_slides { get; set; }
+        protected int m_frames { get; set; }
+        protected int m_slides { get; set; }
 
-        private int m_curFrame { get; set; }
-        private int m_curSlide { get; set; }
+        protected int m_curFrame { get; set; }
+        protected int m_curSlide { get; set; }
 
         public float m_playSpeed { get; set; }
 
         public String m_animationName { get; set; }
 
-        private Texture2D m_texture;
+        protected Texture2D m_texture;
 
         public static void initialize()
         {

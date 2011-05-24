@@ -26,16 +26,16 @@ namespace TestGame.BattleClasses
             }
         }
 
-        private Animation m_animation { get; set; }
+        private WeaponAnimation m_animation { get; set; }
 
         public Dictionary<String, int> m_stats { get; set; }
 
-        private int m_swingCount { get; set; }
+        public int m_swingCount { get; set; }
         public List<Dictionary<String,float>> m_swingData { get; set; }
 
         public static Dictionary<String, Weapon> s_weaponTemplates { get; set; }
 
-        public Weapon(String name, Animation animation)
+        public Weapon(String name, WeaponAnimation animation)
         {
             m_name = name;
             m_animation = animation;
@@ -44,7 +44,7 @@ namespace TestGame.BattleClasses
         public Weapon(Weapon w)
         {
             m_name = w.m_name;
-            m_animation = Animation.getAnimation(w.m_animation.m_animationName);
+            m_animation = WeaponAnimation.getAnimation(w.m_animation.m_animationName);
             m_color = w.m_color;
             m_stats = new Dictionary<string,int>(w.m_stats);
             m_swingCount = w.m_swingCount;
@@ -55,6 +55,7 @@ namespace TestGame.BattleClasses
         {
             if (!m_animation.DRAW(sb, x, y, facing))
             {
+
                 m_animation.setSlide(0);
                 m_animation.DRAW(sb, x, y, facing);
             }
@@ -63,7 +64,12 @@ namespace TestGame.BattleClasses
 
         public void swingWeapon(int swing)
         {
-            m_animation.setSlide(swing+1);
+            m_animation.setSlide(swing+1, true);
+        }
+
+        public void holsterWeapon(int swing)
+        {
+            m_animation.setSlide(swing+1, false);
         }
 
         public Dictionary<String, float> getSwingData(int swing)
@@ -76,7 +82,7 @@ namespace TestGame.BattleClasses
             return new Weapon(s_weaponTemplates[name]);
         }
 
-        public static void addNewWeaponTemplate(String name, Color color, Animation tex, Dictionary<String, int> stats)
+        public static void addNewWeaponTemplate(String name, Color color, WeaponAnimation tex, Dictionary<String, int> stats)
         {
             if (s_weaponTemplates == null)
                 s_weaponTemplates = new Dictionary<string, Weapon>();

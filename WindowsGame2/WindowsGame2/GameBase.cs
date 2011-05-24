@@ -90,14 +90,16 @@ namespace TestGame
             UnitController PLAYERCONTROLLER = new UnitController(a);
             BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER, 1);
 
-            Animation whammer = Animation.getAnimation("WEAPON-SPRITE-WARHAMMER");
-            Weapon.addNewWeaponTemplate("Warhammer", Color.LightGray, whammer, new Dictionary<string, int>());
+            WeaponAnimation whammer = WeaponAnimation.getAnimation("WEAPON-SPRITE-WARHAMMER");
+            Weapon.addNewWeaponTemplate("Warhammer", Color.Orange, whammer, new Dictionary<string, int>());
             Weapon.addSwingToWeapon("Warhammer", 18.0f, 0.8f, -1.2f, 0.6f, 10);
+            Weapon.addSwingToWeapon("Warhammer", 18.0f, -1.2f, 1.0f, 0.7f, 14);
+            Weapon.addSwingToWeapon("Warhammer", 24.0f, 0.0f, -0.0f, 0.95f, 18);
 
             Weapon w = Weapon.getWeaponFromTemplate("Warhammer");
             w.m_unitHeld = PLAYERCONTROLLER;
             a.m_weapon = w;
-
+            
             #region createUnits
             Random ran = new Random();
             for (int i = 0; i < 5; i++)
@@ -148,6 +150,7 @@ namespace TestGame
                 bb.addUnitGroup("Fodder:" + i, BGX);
             }
             #endregion
+            
             bb.addFaction("Player Army", 1);
             bb.addFaction("Enemy Army", 2);
 
@@ -249,7 +252,9 @@ namespace TestGame
         {
             Animation.initialize();
             Animation.s_animations.Add("UNIT-CHARGE-EXPLODE", new Animation("UNIT-CHARGE-EXPLODE", Content.Load<Texture2D>("UM_CenterFlashTest"), 8, 1, 1.0f));
-            Animation.s_animations.Add("WEAPON-SPRITE-WARHAMMER", new Animation("WEAPON-SPRITE-WARHAMMER",Content.Load<Texture2D>("W_TestHammer"), 8, 4, 3.0f));
+
+            WeaponAnimation.initialize();
+            WeaponAnimation.s_animations.Add("WEAPON-SPRITE-WARHAMMER", new WeaponAnimation("WEAPON-SPRITE-WARHAMMER",Content.Load<Texture2D>("W_TestHammer"), 16, 4, 6.0f));
         }
 
         private List<int> InitGraphicsMode(int iWidth, int iHeight, bool bFullScreen)
