@@ -10,6 +10,9 @@ namespace TestGame.BattleClasses
 {
     class BattleBase
     {
+        public int m_mapWidth { get; set; }
+        public int m_mapHeight { get; set; }
+
         List<UnitController> unitList;
         Dictionary<String, BattleGroup> m_unitGroups;
         public BattleCamera m_camera { get; set; }
@@ -18,8 +21,11 @@ namespace TestGame.BattleClasses
         private Dictionary<String, List<int>> m_factions { get; set; }
         private Dictionary<int, String> m_factionNums { get; set; }
 
-        public BattleBase()
+        public BattleBase(int x, int y)
         {
+            m_mapWidth = x;
+            m_mapHeight = y;
+
             unitList = new List<UnitController>();
             m_unitGroups = new Dictionary<string, BattleGroup>();
             m_camera = new BattleCamera(this);

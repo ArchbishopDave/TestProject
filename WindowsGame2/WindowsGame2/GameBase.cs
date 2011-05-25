@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using TestGame.BattleClasses;
+using TestGame.BattleClasses.Display;
 
 namespace TestGame
 {
@@ -20,12 +21,15 @@ namespace TestGame
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         BattleBase bb;
+        Minimap mm;
 
         Texture2D p_icon;
         Texture2D bar_edge;
         Texture2D bar_eglow;
         Texture2D bar_mid;
         Texture2D bar_filt;
+        Texture2D map_edge;
+        Texture2D map_officer;
         SpriteFont bar_font;
         SpriteFont ko_font;
 
@@ -52,7 +56,7 @@ namespace TestGame
         {
             // TODO: Add your initialization logic here
             Window.Title = "Test Game";
-            bb = new BattleBase();
+            bb = new BattleBase(20000,20000);
 
             List<int> dimensions = InitGraphicsMode(SCREEN_WIDTH, SCREEN_HEIGHT, false);
 
@@ -79,19 +83,27 @@ namespace TestGame
             bar_font = Content.Load<SpriteFont>("BarFont");
             bar_filt = Content.Load<Texture2D>("Bar_Filter");
             ko_font = Content.Load<SpriteFont>("KOCountFont");
+            map_edge = Content.Load<Texture2D>("Map_Border");
+            map_officer = Content.Load<Texture2D>("Map_Officer");
             #endregion
 
             setupDefaultAnimations();
 
-            Unit a = new Unit(50, 80, 0, "Player");
+            Minimap.initialize(bb);
+            mm = new Minimap(8000, 8000, 4000, 4000, 32, 32, 128, 96, 100, map_edge, map_officer);
+            mm.setDisplay(true);
+
+
+            Unit a = new Unit(10050, 10080, 0, "Player");
             a.setTexture(p_icon, Color.Azure);
             a.setStats(250, 170, 100, 100, 100, 100, 100, 120, 1, 0, 4000);
             a.m_important = true;
             UnitController PLAYERCONTROLLER = new UnitController(a);
+            mm.addWatchUnit(PLAYERCONTROLLER);
             BattleGroup bgA = new BattleGroup(PLAYERCONTROLLER, 1);
 
             WeaponAnimation whammer = WeaponAnimation.getAnimation("WEAPON-SPRITE-WARHAMMER");
-            Weapon.addNewWeaponTemplate("Warhammer", Color.Orange, whammer, new Dictionary<string, int>());
+            Weapon.addNewWeaponTemplate("Warhammer", Color.LightGray, whammer, new Dictionary<string, int>());
             Weapon.addSwingToWeapon("Warhammer", 18.0f, 0.8f, -1.2f, 0.6f, 10);
             Weapon.addSwingToWeapon("Warhammer", 18.0f, -1.2f, 1.0f, 0.7f, 14);
             Weapon.addSwingToWeapon("Warhammer", 24.0f, 0.0f, -0.0f, 0.95f, 18);
@@ -104,17 +116,18 @@ namespace TestGame
             Random ran = new Random();
             for (int i = 0; i < 5; i++)
             {
-                Unit l = new Unit(ran.Next(600) - 300 * i, ran.Next(600) + 50 * i, 0,"Lieutenant");
+                Unit l = new Unit(ran.Next(600) - 300 * i + 10000, ran.Next(600) + 50 * i + 10000, 0,"Lieutenant");
                 l.setStats(120, 80, 80, 80, 80, 80, 80, 80, 2, 0, 4000);
                 l.setTexture(p_icon, Color.Blue);
                 UnitController UCL = new UnitController(l);
+                mm.addWatchUnit(UCL);
                 BattleGroup BGX = new BattleGroup(UCL, 1);
                 Weapon lw = Weapon.getWeaponFromTemplate("Warhammer");
                 lw.m_unitHeld = UCL;
                 l.m_weapon = lw;
                 for (int j = 0; j < 100; j++)
                 {
-                    Unit f = new Unit(ran.Next(600) - 300 * i, ran.Next(600) + 50 * i, 0,"Private");
+                    Unit f = new Unit(ran.Next(600) - 300 * i + 10000, ran.Next(600) + 50 * i + 10000, 0, "Private");
                     f.setStats(80, 50, 60, 60, 60, 60, 60, 60, 1, 0, 4000);
                     f.setTexture(p_icon, Color.LightBlue);
                     UnitController UCF = new UnitController(f);
@@ -128,17 +141,18 @@ namespace TestGame
 
             for (int i = 0; i < 6; i++)
             {
-                Unit l = new Unit(ran.Next(600) + 300 * i, ran.Next(600) + 50 * i, 3.0f,"Lieutenant");
+                Unit l = new Unit(ran.Next(600) + 300 * i + 10000, ran.Next(600) + 50 * i + 10000, 3.0f, "Lieutenant");
                 l.setStats(120, 80, 80, 80, 80, 80, 80, 80, 2, 0, 4000);
                 l.setTexture(p_icon, Color.Red);
                 UnitController UCL = new UnitController(l);
+                mm.addWatchUnit(UCL);
                 BattleGroup BGX = new BattleGroup(UCL, 2);
                 Weapon lw = Weapon.getWeaponFromTemplate("Warhammer");
                 lw.m_unitHeld = UCL;
                 l.m_weapon = lw;
                 for (int j = 0; j < 100; j++)
                 {
-                    Unit f = new Unit(ran.Next(600) + 600 * i, ran.Next(600) + 50 * i, 3.0f,"Private");
+                    Unit f = new Unit(ran.Next(600) + 600 * i + 10000, ran.Next(600) + 50 * i + 10000, 3.0f, "Private");
                     f.setStats(80, 50, 60, 60, 60, 60, 60, 60, 1, 0, 4000);
                     f.setTexture(p_icon, Color.LightPink);
                     UnitController UCF = new UnitController(f);
@@ -195,6 +209,7 @@ namespace TestGame
             spriteBatch.Begin();
             bb.drawUnits(spriteBatch);
             TEMPDRAWBAR();
+            mm.DRAW(spriteBatch);
             spriteBatch.End();
 
             base.Draw(gameTime);
